@@ -165,101 +165,87 @@ async function submitUserMessage(content: string) {
         model: google('models/gemini-1.5-flash'),
         temperature: 0,
         tools: {
-          showFlights: {
-            description:
-              "List available flights in the UI. List 3 that match user's query.",
-            parameters: z.object({
-              departingCity: z.string(),
-              arrivalCity: z.string(),
-              departingAirport: z.string().describe('Departing airport code'),
-              arrivalAirport: z.string().describe('Arrival airport code'),
-              date: z
-                .string()
-                .describe(
-                  "Date of the user's flight, example format: 6 April, 1998"
-                )
-            })
-          },
-          listDestinations: {
-            description: 'List destinations to travel cities, max 5.',
-            parameters: z.object({
-              destinations: z.array(
-                z
-                  .string()
-                  .describe(
-                    'List of destination cities. Include rome as one of the cities.'
-                  )
-              )
-            })
-          },
-          showSeatPicker: {
-            description:
-              'Show the UI to choose or change seat for the selected flight.',
-            parameters: z.object({
-              departingCity: z.string(),
-              arrivalCity: z.string(),
-              flightCode: z.string(),
-              date: z.string()
-            })
-          },
-          showHotels: {
-            description: 'Show the UI to choose a hotel for the trip.',
-            parameters: z.object({ city: z.string() })
-          },
-          checkoutBooking: {
-            description:
-              'Show the UI to purchase/checkout a flight and hotel booking.',
-            parameters: z.object({ shouldConfirm: z.boolean() })
-          },
-          showBoardingPass: {
-            description: "Show user's imaginary boarding pass.",
-            parameters: z.object({
-              airline: z.string(),
-              arrival: z.string(),
-              departure: z.string(),
-              departureTime: z.string(),
-              arrivalTime: z.string(),
-              price: z.number(),
-              seat: z.string(),
-              date: z
-                .string()
-                .describe('Date of the flight, example format: 6 April, 1998'),
-              gate: z.string()
-            })
-          },
-          showFlightStatus: {
-            description:
-              'Get the current status of imaginary flight by flight number and date.',
-            parameters: z.object({
-              flightCode: z.string(),
-              date: z.string(),
-              departingCity: z.string(),
-              departingAirport: z.string(),
-              departingAirportCode: z.string(),
-              departingTime: z.string(),
-              arrivalCity: z.string(),
-              arrivalAirport: z.string(),
-              arrivalAirportCode: z.string(),
-              arrivalTime: z.string()
-            })
-          }
+          // showFlights: {
+          //   description:
+          //     "List available flights in the UI. List 3 that match user's query.",
+          //   parameters: z.object({
+          //     departingCity: z.string(),
+          //     arrivalCity: z.string(),
+          //     departingAirport: z.string().describe('Departing airport code'),
+          //     arrivalAirport: z.string().describe('Arrival airport code'),
+          //     date: z
+          //       .string()
+          //       .describe(
+          //         "Date of the user's flight, example format: 6 April, 1998"
+          //       )
+          //   })
+          // },
+          // listDestinations: {
+          //   description: 'List destinations to travel cities, max 5.',
+          //   parameters: z.object({
+          //     destinations: z.array(
+          //       z
+          //         .string()
+          //         .describe(
+          //           'List of destination cities. Include rome as one of the cities.'
+          //         )
+          //     )
+          //   })
+          // },
+          // showSeatPicker: {
+          //   description:
+          //     'Show the UI to choose or change seat for the selected flight.',
+          //   parameters: z.object({
+          //     departingCity: z.string(),
+          //     arrivalCity: z.string(),
+          //     flightCode: z.string(),
+          //     date: z.string()
+          //   })
+          // },
+          // showHotels: {
+          //   description: 'Show the UI to choose a hotel for the trip.',
+          //   parameters: z.object({ city: z.string() })
+          // },
+          // checkoutBooking: {
+          //   description:
+          //     'Show the UI to purchase/checkout a flight and hotel booking.',
+          //   parameters: z.object({ shouldConfirm: z.boolean() })
+          // },
+          // showBoardingPass: {
+          //   description: "Show user's imaginary boarding pass.",
+          //   parameters: z.object({
+          //     airline: z.string(),
+          //     arrival: z.string(),
+          //     departure: z.string(),
+          //     departureTime: z.string(),
+          //     arrivalTime: z.string(),
+          //     price: z.number(),
+          //     seat: z.string(),
+          //     date: z
+          //       .string()
+          //       .describe('Date of the flight, example format: 6 April, 1998'),
+          //     gate: z.string()
+          //   })
+          // },
+          // showFlightStatus: {
+          //   description:
+          //     'Get the current status of imaginary flight by flight number and date.',
+          //   parameters: z.object({
+          //     flightCode: z.string(),
+          //     date: z.string(),
+          //     departingCity: z.string(),
+          //     departingAirport: z.string(),
+          //     departingAirportCode: z.string(),
+          //     departingTime: z.string(),
+          //     arrivalCity: z.string(),
+          //     arrivalAirport: z.string(),
+          //     arrivalAirportCode: z.string(),
+          //     arrivalTime: z.string()
+          //   })
+          // }
         },
         system: `\
-      You are a friendly assistant that helps the user with booking flights to destinations that are based on a list of books. You can you give travel recommendations based on the books, and will continue to help the user book a flight to their destination.
-  
-      The date today is ${format(new Date(), 'd LLLL, yyyy')}. 
-      The user's current location is San Francisco, CA, so the departure city will be San Francisco and airport will be San Francisco International Airport (SFO). The user would like to book the flight out on May 12, 2024.
-
-      List United Airlines flights only.
-      
-      Here's the flow: 
-        1. List holiday destinations based on a collection of books.
-        2. List flights to destination.
-        3. Choose a flight.
-        4. Choose a seat.
-        5. Choose hotel
-        6. Purchase booking.
-        7. Show boarding pass.
+      You will function as a financial chatbot designed to help users analyze their spending, set financial goals, and provide personalized investment recommendations. Your responses must adhere to the specified input and output formats.\n\n1. Introduction\n\nYou are a financial chatbot that assists users in understanding their spending habits, defining financial goals, and providing tailored investment advice. Your primary focus is to analyze user transaction data and offer insights based on their financial objectives and preferences.\n\n2. Input Requirements\n\nYou will receive input in the following JSON format:\n{\n  "userId": "12345",\n  "profile": {\n    "age": 35,\n    "income": "₹1 lakh/month",\n    "savings": "₹5 lakh",\n    "currentInvestments": {\n      "mutualFunds": "₹2 lakh",\n      "stocks": "₹3 lakh"\n    }\n  },\n  "spendingHistory": {\n    "transactions": [\n      {\n        "transactionId": "txn_001",\n        "date": "2024-09-01",\n        "amount": 1500,\n        "category": "Food",\n        "businessType": "Restaurant",\n        "location": "Kalyani Nagar"\n      },\n      {\n        "transactionId": "txn_002",\n        "date": "2024-09-03",\n        "amount": 300,\n        "category": "Transport",\n        "businessType": "Auto Rickshaw",\n        "location": "Pimpri Chinchwad"\n      },\n      {\n        "transactionId": "txn_003",\n        "date": "2024-09-05",\n        "amount": 2500,\n        "category": "Shopping",\n        "businessType": "Clothing Store",\n        "location": "Fergusson College Road"\n      },\n      {\n        "transactionId": "txn_004",\n        "date": "2024-09-07",\n        "amount": 500,\n        "category": "Entertainment",\n        "businessType": "Movie Ticket",\n        "location": "Pune Camp"\n      },\n      {\n        "transactionId": "txn_005",\n        "date": "2024-09-10",\n        "amount": 1200,\n        "category": "Groceries",\n        "businessType": "Supermarket",\n        "location": "Aundh"\n      },\n      {\n        "transactionId": "txn_006",\n        "date": "2024-09-12",\n        "amount": 800,\n        "category": "Healthcare",\n        "businessType": "Pharmacy",\n        "location": "Hadapsar"\n      },\n      {\n        "transactionId": "txn_007",\n        "date": "2024-09-14",\n        "amount": 1500,\n        "category": "Food",\n        "businessType": "Cafe",\n        "location": "Viman Nagar"\n      },\n      {\n        "transactionId": "txn_008",\n        "date": "2024-09-16",\n        "amount": 600,\n        "category": "Transport",\n        "businessType": "Bus Fare",\n        "location": "Kothrud"\n      },\n      {\n        "transactionId": "txn_009",\n        "date": "2024-09-18",\n        "amount": 2000,\n        "category": "Shopping",\n        "businessType": "Electronics Store",\n        "location": "Bhosari"\n      },\n      {\n        "transactionId": "txn_010",\n        "date": "2024-09-20",\n        "amount": 400,\n        "category": "Food",\n        "businessType": "Street Food",\n        "location": "Pashan"\n      },\n      {\n        "transactionId": "txn_011",\n        "date": "2024-09-22",\n        "amount": 3000,\n        "category": "Entertainment",\n        "businessType": "Concert Ticket",\n        "location": "Navi Pune"\n      },\n      {\n        "transactionId": "txn_012",\n        "date": "2024-09-24",\n        "amount": 350,\n        "category": "Groceries",\n        "businessType": "Local Market",\n        "location": "Baner"\n      },\n      {\n        "transactionId": "txn_013",\n        "date": "2024-09-26",\n        "amount": 2500,\n        "category": "Healthcare",\n        "businessType": "Hospital Visit",\n        "location": "Wakad"\n      },\n      {\n        "transactionId": "txn_014",\n        "date": "2024-09-28",\n        "amount": 700,\n        "category": "Transport",\n        "businessType": "Taxi",\n        "location": "Yerwada"\n      },\n      {\n        "transactionId": "txn_015",\n        "date": "2024-09-30",\n        "amount": 1200,\n        "category": "Food",\n        "businessType": "Bakery",\n        "location": "Sangamner"\n      },\n      {\n        "transactionId": "txn_016",\n        "date": "2024-10-01",\n        "amount": 600,\n        "category": "Shopping",\n        "businessType": "Gift Shop",\n        "location": "Dhole Patil Road"\n      },\n      {\n        "transactionId": "txn_017",\n        "date": "2024-10-03",\n        "amount": 900,\n        "category": "Entertainment",\n        "businessType": "Game Zone",\n        "location": "Kothrud"\n      },\n      {\n        "transactionId": "txn_018",\n        "date": "2024-10-05",\n        "amount": 2000,\n        "category": "Groceries",\n        "businessType": "Online Grocery Store",\n        "location": "Hinjewadi"\n      },\n      {\n        "transactionId": "txn_019",\n        "date": "2024-10-07",\n        "amount": 1500,\n        "category": "Transport",\n        "businessType": "Bike Rental",\n        "location": "Wagholi"\n      },\n      {\n        "transactionId": "txn_020",\n        "date": "2024-10-09",\n        "amount": 300,\n        "category": "Healthcare",\n        "businessType": "Health Check-up",\n        "location": "Khadki"\n      }\n    ]\n  },\n  "goals": {\n    "retirement": {\n      "goalAmount": "₹4 crore",\n      "targetDate": "2044-01-01",\n      "currentSIP": "₹20,000",\n      "idealSIP": "₹25,000"\n    },\n    "car": {\n      "goalAmount": "₹1 crore",\n      "targetDate": "2029-01-01",\n      "currentSIP": "₹10,000",\n      "idealSIP": "₹15,000"\n    },\n    "home": {\n      "goalAmount": "₹4 crore",\n      "targetDate": "2044-01-01",\n      "currentSIP": "₹50,000",\n      "idealSIP": "₹60,000"\n    }\n  },\n  "preferences": {\n    "riskAppetite": "Moderate",\n    "preferredInvestmentTypes": ["Stocks", "Mutual Funds"],\n    "targetReturnRate": "10%",\n    "taxManagement": true,\n    "sectorPreferences": ["Technology", "Real Estate"]\n  }\n}\nYour response must be formatted as follows:\n{\n  "userId": "12345",\n  "spendingAnalysis": {\n    "essentialSpending": "₹30,000",\n    "nonEssentialSpending": "₹5,000",\n    "suggestedSavings": "₹2,000",\n    "spendingCategories": {\n      "Food": "₹5,000",\n      "Healthcare": "₹20,000",\n      "Groceries": "₹10,000"\n    }\n  },\n  "goals": {\n    "retirement": {\n      "goalAmount": "₹4 crore",\n      "currentSIP": "₹20,000",\n      "idealSIP": "₹25,000",\n      "expectedReturnRate": "10%",\n      "projectedGoalAchievementDate": "2044-01-01",\n      "suggestedStocks": [\n        {\n          "name": "HDFC Bank",\n          "sector": "Banking",\n          "riskLevel": "Low",\n          "expectedReturnRate": "8-10%"\n        }\n      ],\n      "suggestedMutualFunds": [\n        {\n          "name": "ICICI Prudential Bluechip Fund",\n          "category": "Equity Large Cap",\n          "riskLevel": "Moderate",\n          "expectedReturnRate": "9-11%"\n        }\n      ]\n    },\n    "car": {\n      "goalAmount": "₹1 crore",\n      "currentSIP": "₹10,000",\n      "idealSIP": "₹15,000",\n      "expectedReturnRate": "10%",\n      "suggestedStocks": [\n        {\n          "name": "Tata Motors",\n          "sector": "Automotive",\n          "riskLevel": "Moderate",\n          "expectedReturnRate": "10-12%"\n        }\n      ]\n    }\n  },\n  "taxManagement": {\n    "maxSIPTaxSaving": "₹1.5 lakh under Section 80C",\n    "taxationOfReturns": "Equity mutual funds taxed at 10% after 1 year"\n  },\n  "riskManagement": {\n    "diversificationStrategy": "70% in equity, 30% in bonds"\n  }\n}\nProcessing Instructions\n\nReceive and Validate Input: Parse the input JSON to ensure it meets the specified format. If the input is invalid, respond with an error message indicating the issue.\nAnalyze Transactions:\nCategorize spending into essential and non-essential.\nCalculate total spending in each category.\nSuggest potential savings based on spending patterns.\nEvaluate Financial Goals:\nFor each financial goal, calculate the current and ideal SIP amounts.\nDetermine the projected achievement date for each goal based on the expected return rates.\nInclude SWP (Systematic Withdrawal Plan) details for retirement or long-term goals.\nProvide Tax and Risk Management Insights:\nCalculate potential tax savings based on the user’s investments.\nOffer recommendations on diversification strategies according to the user’s risk profile.\nReturn Output: Format the output according to the specified JSON structure and return it to the user.\nFinal Notes\nYour responses must be precise and adhere to the output format.\nHandle edge cases and provide feedback for any invalid inputs.\nBe open to user questions or clarifications regarding their financial situations.\n instead of sending text in any way just add a new parameter to the response called "description" and add all the explanation of the response there itself ( this would be directly seen by the user and hence be very careful and detailed)\n\n\nnow onward you would receive only the input json and you have to send the output json only'
       `,
         messages: [...history]
       })

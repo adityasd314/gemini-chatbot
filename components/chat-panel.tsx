@@ -38,16 +38,16 @@ export function ChatPanel({
 
   const exampleMessages = [
     {
-      heading: 'List flights flying from',
-      subheading: 'San Francisco to Rome today',
-      message: `List flights flying from San Francisco to Rome today`
+      heading: 'Check investment performance',
+      subheading: 'for the past year',
+      message: 'What has been the performance of my investments over the last year?'
     },
     {
-      heading: 'What is the status',
-      subheading: 'of flight BA142?',
-      message: 'What is the status of flight BA142?'
+      heading: 'What’s my progress',
+      subheading: 'towards my retirement savings goal?',
+      message: 'How close am I to reaching my retirement savings goal?'
     }
-  ]
+  ];
 
   return (
     <div className="fixed inset-x-0 bg-white/90 bottom-0 w-full duration-300 ease-in-out peer-[[data-state=open]]:group-[]:lg:pl-[250px] peer-[[data-state=open]]:group-[]:xl:pl-[300px] dark:from-10%">
@@ -142,7 +142,7 @@ export function ChatPanel({
 
         <div className="grid gap-4 sm:pb-4">
           <PromptForm input={input} setInput={setInput} />
-          <FooterText className="hidden sm:block" />
+          {/* <FooterText className="hidden sm:block" /> */}
         </div>
       </div>
     </div>
